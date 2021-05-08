@@ -1,0 +1,135 @@
+---
+title: "Penguins_Model"
+author: "Ryan Johnson"
+date: "5/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(tidymodels)
+library(palmerpenguins)
+library(pins)
+
+knitr::opts_chunk$set(echo = TRUE)
+theme_set(theme_minimal())
+```
+
+# Explore the Data
+
+```{r}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  ggplot(aes(flipper_length_mm, bill_length_mm, color = sex, size = body_mass_g)) +
+  geom_point(alpha = 0.5) +
+  labs(y = "Bill Length (mm)", 
+       x = "Flipper Length (mm)",
+       size = "Body Mass (g)",
+       sex = "Sex") +
+  facet_wrap(~species)
+```
+
+# Clean Data
+
+```{r}
+# Remove year and Island
+# Remove NAs from Sex
+penguins_df <- penguins %>%
+  filter(!is.na(sex)) %>%
+  select(-year, -island)
+```
+
+# Build and Validate Model
+
+## Split data
+```{r}
+set.seed(123)
+penguin_split <- initial_split(penguins_df, strata = sex)
+penguin_train <- training(penguin_split)
+penguin_test <- testing(penguin_split)
+```
+
+## Create bootstrap resamples
+```{r}
+set.seed(123)
+penguin_boot <- bootstraps(penguin_train)
+penguin_boot
+```
+
+## Logistic regression model specifications
+```{r}
+glm_spec <- logistic_reg() %>% 
+  set_engine("glm")
+
+glm_spec
+```
+
+# Build workflow
+```{r}
+penguin_wf <- workflow() %>% 
+  add_formula(sex ~ .)
+
+penguin_wf
+```
+
+## Add model and fit to each resampled dataset
+```{r}
+glm_rs <- penguin_wf %>%
+  add_model(glm_spec) %>%
+  fit_resamples(
+    resamples = penguin_boot,
+    control = control_resamples(save_pred = TRUE)
+  )
+
+glm_rs
+```
+
+## Collect model metrics
+```{r}
+# Overall metrics
+collect_metrics(glm_rs)
+
+# Metrics on predicting Sex
+glm_rs %>% 
+  conf_mat_resampled()
+
+# ROC Curve
+glm_rs %>%
+  collect_predictions() %>%
+  group_by(id) %>%
+  roc_curve(sex, .pred_female) %>%
+  ggplot(aes(1 - specificity, sensitivity, color = id)) +
+  geom_abline(lty = 2, color = "gray80", size = 1.5) +
+  geom_path(show.legend = FALSE, alpha = 0.6, size = 1.2) +
+  coord_equal()
+```
+
+## Evaluate on Testing Data
+```{r}
+penguin_final <- penguin_wf %>%
+  add_model(glm_spec) %>%
+  last_fit(penguin_split)
+
+penguin_final
+
+# Collect metrics on testing data
+collect_metrics(penguin_final)
+
+# Generate Confusion Matrix
+collect_predictions(penguin_final) %>%
+  conf_mat(sex, .pred_class)
+```
+
+## Build and Save model as Pin
+```{r}
+penguins_model <- penguin_wf %>% 
+  add_model(glm_spec) %>% 
+  fit(penguin_train)
+
+# Pin to RStudio Connect
+board_register_rsconnect(server = "https://colorado.rstudio.com/rsc",
+                               key = Sys.getenv("CONNECT_API_KEY"))
+
+pins::pin(penguins_model, board = "rsconnect")
+```
+
