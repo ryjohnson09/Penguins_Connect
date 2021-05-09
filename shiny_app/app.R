@@ -1,6 +1,7 @@
 library(shiny)
 library(tidyverse)
 library(httr)
+library(scales)
 
 # Define UI
 ui <- fluidPage(
@@ -34,8 +35,7 @@ ui <- fluidPage(
                          label = "Body Mass (g)", 
                          value = 3500,
                          min = 2500, 
-                         max = 6500),
-            actionButton("go", "Predict!")
+                         max = 6500)
         ),
 
         # Show Female or Male
@@ -49,33 +49,38 @@ ui <- fluidPage(
 server <- function(input, output) {
 
     # Use API to get penguin sex prediction
-    sex_pred <- eventReactive(
-        input$go,
-        {
-            httr::GET(
-                "https://colorado.rstudio.com/rsc/penguins_api/pred",
-                query = list(
-                    species = "Adelie",
-                    bill_length_mm = input$bl,
-                    bill_depth_mm = input$bd,
-                    flipper_length_mm = input$fl,
-                    body_mass_g = input$bm
-                ),
-                add_headers(Authorization = paste0(
-                    "Key ", Sys.getenv("CONNECT_API_KEY")
-                ))
-            ) %>%
-                httr::content() %>% 
-                map_df(as_tibble) %>% 
-                rename(Female = .pred_female, Male = .pred_male) %>% 
-                pivot_longer(cols = c(Male, Female), 
-                             names_to = "Sex", 
-                             values_to = "Probability")
+    sex_pred <- reactive({
+        httr::GET(
+            "https://colorado.rstudio.com/rsc/penguins_api/pred",
+            query = list(
+                species = "Adelie",
+                bill_length_mm = input$bl,
+                bill_depth_mm = input$bd,
+                flipper_length_mm = input$fl,
+                body_mass_g = input$bm
+            )
+        ) %>%
+            httr::content() %>%
+            map_df(as_tibble) %>%
+            rename(Female = .pred_female, Male = .pred_male) %>%
+            pivot_longer(
+                cols = c(Male, Female),
+                names_to = "Sex",
+                values_to = "Probability"
+            )
     })
     
+    # Plot Probabilities
     output$sex_prob_plot <- renderPlot({
         ggplot(sex_pred(), aes(x = Sex, y = Probability)) +
-            geom_bar(stat = "identity")
+            geom_bar(stat = "identity") +
+            theme_minimal() +
+            labs(x = "") +
+            scale_y_continuous(labels = percent_format(scale = 100)) +
+            theme(
+                axis.text = element_text(size = 15),
+                axis.title = element_text(size = 18)
+            )
         
     })
     
