@@ -53,7 +53,7 @@ server <- function(input, output) {
         httr::GET(
             "https://colorado.rstudio.com/rsc/penguins_api/pred",
             query = list(
-                species = "Adelie",
+                species = input$species,
                 bill_length_mm = input$bl,
                 bill_depth_mm = input$bd,
                 flipper_length_mm = input$fl,
