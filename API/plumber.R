@@ -7,9 +7,9 @@ board_register_rsconnect(server = "https://colorado.rstudio.com/rsc",
                          key = Sys.getenv("CONNECT_API_KEY"))
 penguins_model <- pin_get("ryan/penguins-model", board = "rsconnect")
 
-#* @apiTitle Prediction Penguin Sex
+#* @apiTitle Male or Female Penguin?
 
-#* Return the sex of Penguin based on body characteristics and species
+#* Return the probability of male or female based on penguin body characteristics and species
 
 #* @param species Species of penguin (Adelie, Gentoo, Chinstrap)
 #* @param bill_length_mm:numeric Bill length in millimeters (eg. 38.6)
