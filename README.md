@@ -1,8 +1,6 @@
 # Penguins Connect
 
-<center>
-<img src="images/workflow.jpeg" width="400">
-</center>
+![](images/workflow.jpeg)
 
 The goal of Penguins Connect is to demonstrate an end-to-end data science workflow that is hosted on RStudio Connect. The workflow (and how to reproduce this workflow) are diagrammed above and detailed below:
 
