@@ -1,0 +1,62 @@
+---
+title: Penguins Connect Content
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(connectwidgets)
+library(dplyr)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+client <- connect(
+  server  = "https://colorado.rstudio.com/rsc",
+  api_key = Sys.getenv("CONNECT_API_KEY")
+  )
+
+guids <- c("48ce9479-0abe-4fdf-bf7b-526bbf395094", # R Markdown
+           "85a4e78c-1cb2-42c5-8286-7d6b8af4ea6e", # Pin
+           "5d68a141-3ce5-4bf7-8bf0-d021c8334b30", # API
+           "214adca9-92c2-4fcc-8f67-4fa9dfd7bf3c") # Shiny App
+
+penguins_content <- content(client = client) %>% 
+  filter(guid %in% guids)
+
+
+```
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/logo.png)
+
+## Components
+
+### Apps
+
+```{r}
+penguins_content %>% 
+  filter(guid == "214adca9-92c2-4fcc-8f67-4fa9dfd7bf3c") %>% 
+  rsc_card()
+```
+
+### RMD
+
+```{r}
+penguins_content %>%
+  filter(guid == "48ce9479-0abe-4fdf-bf7b-526bbf395094") %>% 
+  rsc_grid()
+```
+
+### Pins
+
+```{r}
+penguins_content %>% 
+  filter(guid %in% c("85a4e78c-1cb2-42c5-8286-7d6b8af4ea6e")) %>% 
+  rsc_table()
+```
+
+### APIs
+
+```{r}
+penguins_content %>% 
+  filter(guid %in% c("5d68a141-3ce5-4bf7-8bf0-d021c8334b30")) %>% 
+  rsc_card()
+```
