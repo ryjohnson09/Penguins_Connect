@@ -1,0 +1,13 @@
+name: penguins_connect_content
+title: Penguins_Connect_Content
+username: ryan
+account: ryan
+server: colorado.rstudio.com
+hostUrl: https://colorado.rstudio.com/rsc/__api__
+appId: 9768
+bundleId: 47874
+url: https://colorado.rstudio.com/rsc/content/cf1b1ff0-cc5b-4966-99bc-ce609167f778/
+when: 1630939593.34991
+lastSyncTime: 1630939593.34993
+asMultiple: FALSE
+asStatic: FALSE

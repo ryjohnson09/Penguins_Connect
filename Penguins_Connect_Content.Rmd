@@ -1,6 +1,8 @@
 ---
-title: Penguins Connect Content
+title: "Penguins Connect Content"
 output: html_document
+resource_files:
+- images/workflow.jpeg
 ---
 
 ```{r setup, include=FALSE}
@@ -26,6 +28,7 @@ penguins_content <- content(client = client) %>%
 ```
 
 ![](https://allisonhorst.github.io/palmerpenguins/reference/figures/logo.png)
+![](images/workflow.jpeg)
 
 ## Components
 

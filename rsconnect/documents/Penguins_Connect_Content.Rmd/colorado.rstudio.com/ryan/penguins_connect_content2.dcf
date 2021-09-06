@@ -1,0 +1,14 @@
+name: penguins_connect_content2
+title: Penguins_Connect_Content
+username: ryan
+account: ryan
+server: colorado.rstudio.com
+hostUrl: https://colorado.rstudio.com/rsc/__api__
+appId: 9769
+bundleId: 47875
+url: https://colorado.rstudio.com/rsc/content/0a290c41-76a3-48d1-a809-6da9dab81fb6/
+when: 1630939713.82352
+lastSyncTime: 1630939713.82354
+asMultiple: FALSE
+asStatic: FALSE
+additionalFiles: images/workflow.jpeg
