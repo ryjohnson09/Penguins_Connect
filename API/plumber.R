@@ -9,7 +9,7 @@ penguins_model <- pin_get("ryan/penguins-model", board = "rsconnect")
 
 #* @apiTitle Male or Female Penguin?
 
-#* Return the probability of male or female based on penguin body characteristics and species
+#* @apiDescription Return the probability of male or female based on penguin body characteristics and species
 
 #* @param species Species of penguin (Adelie, Gentoo, Chinstrap)
 #* @param bill_length_mm:numeric Bill length in millimeters (eg. 38.6)
